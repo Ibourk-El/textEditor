@@ -44,18 +44,22 @@ span.underline{
 span.strikethrough {
   text-decoration:line-through;
 }
-span.center {
+p.center {
   text-align: center;
 }
-span.left {
+p.left {
   text-align: left;
 }
-span.right {
+p.right {
   text-align: right;
 }
 span[contenteditable="true"]{
   border: none;
   outline: none;
+}
+
+p[class|="fa-align"]{
+  
 }
 
 input{
