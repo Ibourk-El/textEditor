@@ -1,115 +1,123 @@
-
-
 let icons = document.querySelectorAll("i");
 let text_box = document.getElementById("text-box");
-let textInput = document.getElementById("inputText");
+let fontSize = document.getElementById("font-size");
+let addTableBtn = document.getElementById("add");
+let alignText = document.querySelectorAll(".align");
 
-let textArr = [createElement("span",changeStyleOfText() )];
-let index = 0;
-let text = "";
-let isStartWriting = true;
+let textStack = [];
+let txtStackIndex = -1;
 
 icons.forEach((el) => {
   el.addEventListener("click", (e) => {
     e.target.classList.toggle("active");
-    console.log(textArr);
-    if (e.target.getAttribute("data-style")==="bold"&&e.target.classList.contains("active")) {
-      index=textArr.length
-      textArr.push(createElement("span",changeStyleOfText() ));
-      textArr[index].classList.add("bold");
+    if (textStack.length > 0) {
+      resetAlignText(e.target);
+      if (e.target.classList.contains("active")) {
+        textStack[txtStackIndex].classList.add(
+          e.target.getAttribute("data-style")
+        );
+      } else {
+        textStack[txtStackIndex].classList.remove(
+          e.target.getAttribute("data-style")
+        );
+      }
     }
-    if (e.target.getAttribute("data-style")==="italic"&&e.target.classList.contains("active")) {
-      index=textArr.length
-      textArr.push(createElement("span",changeStyleOfText() ));
-      textArr[index].classList.add("italic");
-    }
-    if (e.target.getAttribute("data-style")==="underline"&&e.target.classList.contains("active")) {
-      index=textArr.length
-      textArr.push(createElement("span",changeStyleOfText() ));
-      textArr[index].classList.add("underline");
-    }
-    if (e.target.getAttribute("data-style")==="strikethrough"&&e.target.classList.contains("active")) {
-      index=textArr.length
-      textArr.push(createElement("span",changeStyleOfText() ));
-      textArr[index].classList.add("italic");
-    }
-    if (e.target.getAttribute("data-style") === "center" &&e.target.classList.contains("active")) {
-      textArr[index].classList.add("center");
-      textArr[index].classList.remove("left")
-      textArr[index].classList.remove("right")
-    }
-    if (e.target.getAttribute("data-style") === "left" &&e.target.classList.contains("active")) {
-      textArr[index].classList.add("left");
-      textArr[index].classList.remove("center");
-      textArr[index].classList.remove("right")
-
-    }
-    if (e.target.getAttribute("data-style") === "right" &&e.target.classList.contains("active")) {
-      textArr[index].classList.add("right");
-      textArr[index].classList.remove("center");
-      textArr[index].classList.remove("left")
-    }
-    if (e.target.getAttribute("data-style") === "ol" &&e.target.classList.contains("active")) {
-    }
-    if (e.target.getAttribute("data-style") === "ul" &&e.target.classList.contains("active")) {
-    }
-    isStartWriting=true;
-    textInput.focus()
-    setDataInTextBox();
   });
 });
 
-addEventListener("keydown", (e) => {
-  if (e.key==="Enter") {
-    index=textArr.length-1
-    textArr[index].innerHTML += textInput.value;
-    textInput.value="";
-    textArr.push(createElement("br",""));
-    textArr.push(createElement("span", changeStyleOfText()));
-  } else if (e.key === "Backspace") {
-  }
-  index=textArr.length-1
-  textArr[index].innerHTML += textInput.value;
-  textInput.value="";
-  setDataInTextBox();
+fontSize.addEventListener("change", (e) => {
+  if (e.target.value > 0)
+    textStack[txtStackIndex].style.fontSize = e.target.value + "px";
 });
 
-function createElement(el,classes) {
-  let span=document.createElement(el);
-  span.className="spanText "+classes
-  span.setAttribute("contenteditable","true")
-  return span;
-}
-
-function setDataInTextBox() {
-  let len=textArr.length;
-  console.log(textArr);
-  resetText() 
-  for (let i=0; i<len; i++){
-    console.log(textArr[i],i)
-    text_box.insertBefore(textArr[i],textInput)
+text_box.addEventListener("dblclick", (e) => {
+  if (e.target === text_box) {
+    textStack.push(createTextBox(e.clientX, e.clientY));
+    text_box.appendChild(textStack[txtStackIndex]);
   }
-}
-
-//reset text to set new text
-function resetText() {
-  let spanText=document.querySelectorAll("spanText")
-  let len=spanText.length
-  for (let i=0; i<len; i++){
-    spanText[i].remove()
-  }
-}
-
-function changeStyleOfText() {
-  let classes=""
-  icons.forEach(item => {
-    if (item.classList.contains("active")) {
-      classes+=" "+item.getAttribute("data-style")
+  if (textStack.length >1) {
+    txtStackIndex--
+    if (textStack[txtStackIndex].innerHTML === "") {
+      text_box.children[txtStackIndex].remove();
+      textStack.shift();
     }
-  })
-  return classes
+  }
+});
+
+addTableBtn.addEventListener("click", (e) => {
+  e.target.parentElement.style.display = "none";
+  createTable();
+});
+
+function resetAlignText(x) {
+  if (x.classList.contains("align")) {
+    alignText.forEach((item) => {
+      if (item !== x) {
+        item.classList.remove("active");
+        textStack[txtStackIndex].classList.remove(
+          item.getAttribute("data-style")
+        );
+      }
+    });
+  }
 }
 
-text_box.addEventListener("click", (e) => {
-  if(e.target===text_box)textInput.focus()
-})
+function createTextBox(x, y) {
+  const p = document.createElement("p");
+  p.autofocus = "true";
+  p.contentEditable = "true";
+  p.style.border = "1px solid red";
+  p.style.resize = "both";
+  p.style.overflow = "hidden";
+  p.style.position = "absolute";
+  p.style.width = "100px";
+  p.style.outline = "none";
+  p.style.left = x - text_box.offsetLeft + "px";
+  p.style.top = y - text_box.offsetTop + "px";
+  txtStackIndex++;
+  p.addEventListener("dblclick", () => {
+    p.classList.toggle("move");
+    if (p.classList.contains("move")) {
+      p.style.cursor = "move";
+    } else {
+      p.style.cursor = "default";
+    }
+  });
+  p.addEventListener("mousemove", (e) => {
+    if (p.classList.contains("move")) {
+      p.style.left = e.clientX - 10 - text_box.offsetLeft + "px";
+      p.style.top = e.clientY - 10 - text_box.offsetTop + "px";
+    }
+  });
+
+  return p;
+}
+
+function createRemoveBtn() {
+  const btn = document.createElement("i");
+  btn.className = "remove ";
+}
+
+function createTable() {
+  let col = +document.getElementById("col").value;
+  let row = +document.getElementById("row").value;
+  let table = document.createElement("table");
+  table.style.resize = "both";
+  table.style.overflow = "hidden";
+  table.style.position = "absolute";
+
+  for (let i = 0; i < col; i++) {
+    let tr = document.createElement("tr");
+    for (let j = 0; j < row; j++) {
+      let td = document.createElement("td");
+      td.style.width = "100px";
+      td.style.height = "20px";
+      td.contentEditable = "true";
+      td.style.border = "1px solid red";
+      tr.appendChild(td);
+    }
+    table.appendChild(tr);
+  }
+  text_box.appendChild(table);
+}
+function addFontStyle() {}

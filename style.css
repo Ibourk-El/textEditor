@@ -1,75 +1,88 @@
-*{
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
-body{
+body {
   display: flex;
   align-items: center;
   justify-content: center;
   height: 100vh;
 }
-section{
+section {
   width: 90%;
+  height: 100%;
 }
-.icons{
+.icons {
   background-color: #eee;
 }
-.icons i{
+.icons i {
   padding: 10px;
-  border-left:1px solid #fff ;
+  border-left: 1px solid #fff;
 }
 
-.icons i.active{
+.icons i.active {
   background-color: #aaa;
 }
+.table{
+  position: relative;
+}
+.table-box {
+  font-size: 10px;
+  position: absolute;
+  left: 0;
+  top: 104%;
+  background-color: #eee;
+  border: 1px solid #fff;
+  display: none;
+  z-index: 100;
 
-.text{
+}
+.table.active .table-box{
+  display: block;
+}
+.table-box input{
+  width: 40px;
+  margin: 5px;
+
+}
+
+.table-box button{
   width: 100%;
-  height: 300px;
-  border: 1px solid ;
+}
+
+
+.text {
+  width: 100%;
+  height: 90%;
+  border: 1px solid;
+  position: relative;
+}
+
+#font-size{
+  width: 40px;
 }
 /* span{
 width: 100%;
 } */
-span.bold{
+p.bold {
   font-weight: bold;
 }
-span.italic {
+p.italic {
   font-style: italic;
 }
-span.underline{
+p.underline {
   text-decoration: underline;
 }
-span.strikethrough {
-  text-decoration:line-through;
+p.strikethrough {
+  text-decoration: line-through;
 }
-span.center {
+p.center {
   text-align: center;
 }
-span.left {
+p.left {
   text-align: left;
 }
-span.right {
+p.right {
   text-align: right;
 }
-span[contenteditable="true"]{
-  border: none;
-  outline: none;
-}
-
-input{
-  padding: 5px 0px;
-  background-color: #eee;
-  border: none;
-  outline: none;
-  width: 5px;
-
-}
-
-.box{
-  width: 100px;
-  height: 100px;
-  border: 1px solid red;
-}
-
